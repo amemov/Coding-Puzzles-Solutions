@@ -1,0 +1,16 @@
+cc_library(
+    name = "solution",
+    srcs = ["solution.cpp", "solution.h"],
+    #hdrs = ["solution.h"]
+
+)
+cc_test(
+    name = "solution_test",
+    size = "small",
+    srcs = ["solution_test.cpp", "solution.h", "solution.cpp"],
+    deps = [
+        ":solution",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+    ],
+)
