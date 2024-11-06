@@ -1,16 +1,20 @@
 cc_library(
     name = "solution",
-    srcs = ["solution.cpp", "solution.h"],
-    #hdrs = ["solution.h"]
+    srcs = ["solution.cpp"],
+    hdrs = ["solution.h"],
+    deps = [ 
+        "@abseil-cpp//absl/container:flat_hash_map",
+    ]
 
 )
+
 cc_test(
     name = "solution_test",
     size = "small",
-    srcs = ["solution_test.cpp", "solution.h", "solution.cpp"],
+    srcs = ["solution_test.cpp"],
     deps = [
         ":solution",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
-    ],
+    ]
 )
