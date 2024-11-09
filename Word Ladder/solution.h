@@ -1,12 +1,11 @@
 #ifndef SOLUTION_H
 #define SOLUTION_H
 
-#include <glog/logging.h>
-
 #include <deque>
 #include <string>
 #include <vector>
 
+#include <glog/logging.h>
 #include "absl/container/flat_hash_map.h"
 #include "absl/container/flat_hash_set.h"
 
