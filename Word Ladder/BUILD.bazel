@@ -5,7 +5,7 @@ cc_library(
     deps = [ 
         "@abseil-cpp//absl/container:flat_hash_map",
         "@abseil-cpp//absl/container:flat_hash_set",
-        "@com_github_google_glog//:glog",
+        "@abseil-cpp//absl/log:absl_check",
     ]
 )
 cc_test(

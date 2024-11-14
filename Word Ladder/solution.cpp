@@ -15,7 +15,7 @@ int LadderLength(std::string_view begin_word, std::string_view end_word,
   }
 
   // Base case: begin_word and end_word lengths do not match
-  CHECK_EQ(end_word.length(), begin_word.length())
+  ABSL_CHECK_EQ(end_word.length(), begin_word.length())
       << "Lengths of begin_word and end_word DO NOT MATCH";
 
   // Create hashMap to store possible paths for every letter change
@@ -46,8 +46,8 @@ int LadderLength(std::string_view begin_word, std::string_view end_word,
   int shortest_path = 1;
   absl::flat_hash_set<std::string> visited_set;
   std::deque<std::string> words_queue;
-  words_queue.push_back(static_cast<std::string>(begin_word));
-  visited_set.insert(static_cast<std::string>(begin_word));
+  words_queue.push_back(std::string(begin_word));
+  visited_set.insert(std::string(begin_word));
 
   // Explore Graph level by level,
   // increment shortest_path after each level got processed
