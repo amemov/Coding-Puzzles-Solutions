@@ -1,68 +1,67 @@
 #include "solution.h"
-std::vector<int> CountVisitedNodes(const std::vector<int>& edges) {
-  std::vector<int> visited_count(edges.size(), -1);  // result
-  absl::flat_hash_set<size_t> path;
-  std::vector<size_t> path_stack;
+std::vector<int> CountVisitedNodes(std::span<const int> edges) {
+  constexpr int kSentinel = std::numeric_limits<int>::min();
+  std::vector<int> visited_count(edges.size(), kSentinel);  // result
+  std::vector<int> path(edges.size(), kSentinel);
 
   // Idea: run DFS on graph starting from index some index (assuming it is
-  // holding sentinel value -1) go until
-  //       We face either of 2 cases:
-  //          1. "First-time" cycle -> all nodes that led to the cycle get
-  //          updated to the the number of nodes in path
-  //          2. Found node that was part of cycle -> we update all nodes
-  //                  in the path with (current number of nodes + value of
-  //                  previously computed cycle that we just faced)
-  //             OR maybe we should somehow get to the element on top of path
-  //             and just get element from top,
-  //                give it this value, then deduct this counter by -1 and give
-  //                this value to next vertex, and so on?
-  // Logic: We run from 0 and we go until we face either of 2 cases
-  //        OR if problem constaint didn't say that there is at least 1 cycle,
-  //           worst-case our graph is just a linked list w/o cycle.
-  //        We only consider nodes that are still set to sentinel value of -1.
+  // holding sentinel value 'kSentinel') go until
+  //       We face either of 1 or 2 cases:
+  //          1. Cycle -> all nodes inside the cycle are assigned to the length
+  //          of cycle
+  //          2. No Cycle or was cycle before - doesn't matter, still need to go
+  //          back and update each node that we visited with the value of last
+  //          element from path + 1
+  //
   // Complexity: Time O(n), since the graph has at least 1 cycle. With help of
-  // the DP, we can reduce redundant calculations,
-  //             therefore, we only visit each node just once
+  //             the DP, we can reduce redundant calculations,t herefore,
+  //             we only visit each node just once.
   //             It could be O(n^2) if the graph could have 0 cycles because of
   //             case where we can have linked list, where first pass is n, next
   //             is n-1, ..., and therefore we get quadratic time complexity
+  //
   //             Space O(1), because we only allocate the space for result
   //             variable and the graph is technically defined
-  //                         in the edges variable. 'path' variable in worst
-  //                         case might take O(n) which doesn't surpass the
-  //                         amount of space that we allocate for
-  //                         'visited_count'
+  //             in the edges variable. 'path' variable in worst
+  //             case might take O(n) which doesn't surpass the
+  //             amount of space that we allocate for 'visited_count'
+
   for (size_t i = 0; i < edges.size(); ++i) {
-    if (visited_count[i] == -1) {
-      // path.insert(i);
-      size_t node = i;
+    if (visited_count[i] != kSentinel) {
+      continue;
+    }
 
-      // goes until cycle or end of graph (no cycle)
-      while (path.find(node) == path.end() && visited_count[node] == -1) {
-        path.insert(node);
-        path_stack.push_back(node);
-        node = edges[node];
+    size_t node = i;
+    std::vector<size_t> stack;
+
+    // goes until cycle or end of graph (no cycle)
+    while (visited_count[node] == kSentinel && path[node] == kSentinel) {
+      // size of stack corresponds to the curr index
+      path[node] = stack.size();
+      stack.push_back(node);
+      // verify the node is not negative
+      CHECK(edges[node] >= 0) << "CountVisitedNodes: Negative node in the "
+                                 "graph detected. Node value: "
+                              << edges[node];
+      node = edges[node];
+    }
+
+    // #1 Found a new cycle
+    if (visited_count[node] == kSentinel) {
+      size_t cycle_length = stack.size() - path[node];
+      for (size_t j = path[node]; j < stack.size(); ++j) {
+        visited_count[stack[j]] = cycle_length;
       }
+    }
 
-      // Cycle found. Is it case #1 where we see cycle for 1st time?
-      if (visited_count[node] == -1) {
-        // upd visited_count for all elements in path with path.size
-        int counter = path.size();
-        for (const auto& vertex : path) {
-          // if(visited_count[vertex] == -1){
-          visited_count[vertex] = counter;
-          //}
-        }
-        // #2 we found previously computed cycle
-      } else {
-        // upd everything in the path with path.size + visited_count[node]
-        int counter = path.size() + visited_count[node];
-        size_t vertex = path_stack.front();
-        visited_count[vertex] = counter;
+    // #2 No cycle? But still need to backtrack and fill out visited_count for
+    // each node that we visited
+    while (!stack.empty()) {
+      size_t v = stack.back();
+      stack.pop_back();
+      if (visited_count[v] == kSentinel) {
+        visited_count[v] = visited_count[edges[v]] + 1;
       }
-
-      path.clear();
-      path_stack.clear();
     }
   }
 
