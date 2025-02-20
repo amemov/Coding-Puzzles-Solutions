@@ -1,5 +1,4 @@
 # MODULE.bazel
-
 # Choose the most recent version available at
 # https://registry.bazel.build/modules/googletest
 

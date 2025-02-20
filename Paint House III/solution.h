@@ -10,4 +10,4 @@
 // Count Visited Nodes in a Directed Graph ( LeetCode 2876 )
 int CostToPaintNeighborhood(std::span<const int> cost, std::span<const int> houses, int m, int n, int target);
 
-#endif  // SOLUTION_H   
+#endif  // SOLUTION_H    
