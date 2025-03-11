@@ -1,0 +1,17 @@
+cc_library(
+    name = "solution",
+    srcs = ["solution.cpp"],
+    hdrs = ["solution.h"],
+    deps = [    
+        "@abseil-cpp//absl/log:absl_check",
+    ]
+)
+cc_test(
+    name = "solution_test",
+    srcs = ["solution_test.cpp"],
+    deps = [
+        ":solution",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main"
+    ]
+)   
